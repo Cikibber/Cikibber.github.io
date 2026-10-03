@@ -338,6 +338,11 @@ let isAboutPageOpen = false;
 let isContactPageOpen = false;
 let selectedContactIndex = 0;
 let isWavyTransitionRunning = false;
+// Close requested while a screen was still opening; runs as soon as the reveal finishes.
+let pendingScreenClose = null;
+// Detail card animations, kept so a fast close/reopen can cancel the stale one.
+let modalOpenAnim = null;
+let modalCloseAnim = null;
 
 // DOM Elements: Main Menu & Background
 const bgVideoIntro = document.getElementById("background-video-intro") || document.getElementById("background-video");
@@ -911,6 +916,11 @@ function executeWavyReveal({
     try { anim.cancel(); } catch (_) {}
     isWavyTransitionRunning = false;
     if (onComplete) onComplete();
+    if (pendingScreenClose) {
+      const closeNow = pendingScreenClose;
+      pendingScreenClose = null;
+      closeNow();
+    }
   };
 }
 
@@ -1118,9 +1128,14 @@ function openProjectDetail(item, cardId) {
   portfolioModal.setAttribute("aria-hidden", "false");
   playSFX();
 
+  if (modalCloseAnim) {
+    modalCloseAnim.cancel();
+    modalCloseAnim = null;
+  }
+
   const origin = getSlinkCardCenter(cardId);
   const targetRadius = calculateTargetRadius(origin);
-  portfolioModal.animate([
+  modalOpenAnim = portfolioModal.animate([
     { clipPath: generateWavyPolygon(origin.x, origin.y, 0, 100, 6, 0.08, 12, 0.03, 0.0, 1.25, 1.05) },
     { clipPath: generateWavyPolygon(origin.x, origin.y, targetRadius * 0.45, 100, 6, 0.085, 12, 0.03, 1.0, 1.25, 1.05), offset: 0.4 },
     { clipPath: generateWavyPolygon(origin.x, origin.y, targetRadius, 100, 6, 0.05, 12, 0.015, 2.5, 1.15, 1.02) }
@@ -1129,6 +1144,11 @@ function openProjectDetail(item, cardId) {
     easing: "cubic-bezier(0.2, 1, 0.35, 1)",
     fill: "forwards"
   });
+  modalOpenAnim.onfinish = () => {
+    portfolioModal.style.clipPath = "";
+    if (modalOpenAnim) modalOpenAnim.cancel();
+    modalOpenAnim = null;
+  };
 }
 
 function openProjectPage(clickEvent) {
@@ -1152,7 +1172,11 @@ function openProjectPage(clickEvent) {
 }
 
 function closeProjectPage() {
-  if (!isProjectPageOpen || isWavyTransitionRunning) return;
+  if (!isProjectPageOpen) return;
+  if (isWavyTransitionRunning) {
+    pendingScreenClose = closeProjectPage;
+    return;
+  }
   isProjectPageOpen = false;
   popScreenHistory();
 
@@ -1240,7 +1264,11 @@ function openExperiencePage(clickEvent) {
 }
 
 function closeExperiencePage() {
-  if (!isExperiencePageOpen || isWavyTransitionRunning) return;
+  if (!isExperiencePageOpen) return;
+  if (isWavyTransitionRunning) {
+    pendingScreenClose = closeExperiencePage;
+    return;
+  }
   isExperiencePageOpen = false;
   popScreenHistory();
 
@@ -1377,7 +1405,11 @@ function openSkillPage(clickEvent) {
 }
 
 function closeSkillPage() {
-  if (!isSkillPageOpen || isWavyTransitionRunning) return;
+  if (!isSkillPageOpen) return;
+  if (isWavyTransitionRunning) {
+    pendingScreenClose = closeSkillPage;
+    return;
+  }
   isSkillPageOpen = false;
   popScreenHistory();
 
@@ -1418,7 +1450,11 @@ function openAboutPage(clickEvent) {
 }
 
 function closeAboutPage() {
-  if (!isAboutPageOpen || isWavyTransitionRunning) return;
+  if (!isAboutPageOpen) return;
+  if (isWavyTransitionRunning) {
+    pendingScreenClose = closeAboutPage;
+    return;
+  }
   isAboutPageOpen = false;
   popScreenHistory();
 
@@ -1474,7 +1510,11 @@ function openContactPage(clickEvent) {
 }
 
 function closeContactPage() {
-  if (!isContactPageOpen || isWavyTransitionRunning) return;
+  if (!isContactPageOpen) return;
+  if (isWavyTransitionRunning) {
+    pendingScreenClose = closeContactPage;
+    return;
+  }
   isContactPageOpen = false;
   popScreenHistory();
 
@@ -1545,6 +1585,11 @@ function closeModal() {
   popScreenHistory();
   playCloseMenuSFX();
 
+  if (modalOpenAnim) {
+    modalOpenAnim.cancel();
+    modalOpenAnim = null;
+  }
+
   const exitOrigin = getModalExitOrigin();
   const targetRadius = calculateTargetRadius(exitOrigin);
 
@@ -1557,10 +1602,14 @@ function closeModal() {
     fill: "forwards"
   });
 
+  modalCloseAnim = closeAnim;
   closeAnim.onfinish = () => {
+    if (modalCloseAnim !== closeAnim) return;
+    modalCloseAnim = null;
     portfolioModal.classList.remove("active", "project-detail-mode");
     portfolioModal.setAttribute("aria-hidden", "true");
     portfolioModal.style.clipPath = "";
+    closeAnim.cancel();
   };
 }
 
