@@ -230,7 +230,7 @@ const experienceData = [
   {
     numeral: "II",
     title: "BARISTA",
-    subtitle: "Hokihana · Kantin Mentari · 2023–2024",
+    subtitle: "Hokihana · Kantin Mentari · 2023–⁠2024",
     status: "FEB 2023 – MAY 2024",
     detailTitle: "BARISTA",
     detailSubtitle: "Hokihana · Kantin Mentari, beside BPK Penabur Gading Serpong · Tangerang, Banten",
@@ -245,7 +245,7 @@ const experienceData = [
   {
     numeral: "III",
     title: "CANTEEN ENTREPRENEUR",
-    subtitle: "Benz Corner · UMN Canteen · 2022–2023",
+    subtitle: "Benz Corner · UMN Canteen · 2022–⁠2023",
     status: "AUG 2022 – JUN 2023",
     detailTitle: "CANTEEN ENTREPRENEUR",
     detailSubtitle: "Benz Corner · Universitas Multimedia Nusantara (UMN) Canteen · Gading Serpong, Tangerang",
@@ -325,6 +325,9 @@ let isLoaded = false;
 let isStarted = false;
 let selectedIndex = 0;
 let isModalOpen = false;
+// Touch-only behaviour (tap-to-select, back gesture, swipe). Mouse/trackpad devices never match.
+const isTouchDevice = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+
 let isProjectPageOpen = false;
 let isExperiencePageOpen = false;
 let selectedExpIndex = 0;
@@ -468,9 +471,7 @@ async function loadAudioBuffers() {
     }
   } catch (_) {}
 }
-if (window.innerWidth >= 1024) {
-  loadAudioBuffers();
-}
+loadAudioBuffers();
 
 // Clean unified audio playback dispatcher
 function playAudioChannel({
@@ -688,12 +689,17 @@ function renderOptions() {
     // Interactive event triggers
     const hitbox = item.querySelector(".option-hitbox");
     hitbox.addEventListener("mouseenter", () => {
+      if (isTouchDevice) return;
       if (selectedIndex !== index) {
         setIndex(index);
       }
     });
 
     hitbox.addEventListener("click", (e) => {
+      if (isTouchDevice && selectedIndex !== index) {
+        setIndex(index);
+        return;
+      }
       setIndex(index);
       handleOptionConfirm(index, e);
     });
@@ -1021,7 +1027,7 @@ function renderSlinkCards() {
     const card = buildSlinkCard(item, idx, idx === selectedSlinkIndex, "slink-card");
 
     card.addEventListener("mouseenter", () => {
-      if (isProjectPageOpen && !isWavyTransitionRunning && selectedSlinkIndex !== idx) {
+      if (!isTouchDevice && isProjectPageOpen && !isWavyTransitionRunning && selectedSlinkIndex !== idx) {
         selectSlinkCard(idx);
       }
     });
@@ -1107,6 +1113,7 @@ function openProjectDetail(item, cardId) {
   `;
 
   isModalOpen = true;
+  pushScreenHistory();
   portfolioModal.classList.add("active", "project-detail-mode");
   portfolioModal.setAttribute("aria-hidden", "false");
   playSFX();
@@ -1127,6 +1134,7 @@ function openProjectDetail(item, cardId) {
 function openProjectPage(clickEvent) {
   if (isProjectPageOpen || isWavyTransitionRunning) return;
   isProjectPageOpen = true;
+  pushScreenHistory();
   selectedSlinkIndex = 0;
   playSFX();
 
@@ -1146,6 +1154,7 @@ function openProjectPage(clickEvent) {
 function closeProjectPage() {
   if (!isProjectPageOpen || isWavyTransitionRunning) return;
   isProjectPageOpen = false;
+  popScreenHistory();
 
   executeWavyClose({
     pageEl: projectPage,
@@ -1175,7 +1184,7 @@ function renderExperienceCards() {
     const card = buildSlinkCard(item, idx, idx === selectedExpIndex, "exp-card");
 
     card.addEventListener("mouseenter", () => {
-      if (isExperiencePageOpen && !isWavyTransitionRunning && selectedExpIndex !== idx) {
+      if (!isTouchDevice && isExperiencePageOpen && !isWavyTransitionRunning && selectedExpIndex !== idx) {
         selectExperienceCard(idx);
       }
     });
@@ -1214,6 +1223,7 @@ function confirmExperienceSelection() {
 function openExperiencePage(clickEvent) {
   if (isExperiencePageOpen || isWavyTransitionRunning) return;
   isExperiencePageOpen = true;
+  pushScreenHistory();
   selectedExpIndex = 0;
   playSFX();
 
@@ -1232,6 +1242,7 @@ function openExperiencePage(clickEvent) {
 function closeExperiencePage() {
   if (!isExperiencePageOpen || isWavyTransitionRunning) return;
   isExperiencePageOpen = false;
+  popScreenHistory();
 
   executeWavyClose({
     pageEl: experiencePage,
@@ -1349,6 +1360,7 @@ function renderSkillStats(category = "ai") {
 function openSkillPage(clickEvent) {
   if (isSkillPageOpen || isWavyTransitionRunning) return;
   isSkillPageOpen = true;
+  pushScreenHistory();
   playSFX();
 
   executeWavyReveal({
@@ -1367,6 +1379,7 @@ function openSkillPage(clickEvent) {
 function closeSkillPage() {
   if (!isSkillPageOpen || isWavyTransitionRunning) return;
   isSkillPageOpen = false;
+  popScreenHistory();
 
   executeWavyClose({
     pageEl: skillPage,
@@ -1390,6 +1403,7 @@ function triggerAboutTitleAnimation() {
 function openAboutPage(clickEvent) {
   if (isAboutPageOpen || isWavyTransitionRunning) return;
   isAboutPageOpen = true;
+  pushScreenHistory();
   playSFX();
 
   executeWavyReveal({
@@ -1406,6 +1420,7 @@ function openAboutPage(clickEvent) {
 function closeAboutPage() {
   if (!isAboutPageOpen || isWavyTransitionRunning) return;
   isAboutPageOpen = false;
+  popScreenHistory();
 
   executeWavyClose({
     pageEl: aboutPage,
@@ -1443,6 +1458,7 @@ function triggerContactPhoneAnimation() {
 function openContactPage(clickEvent) {
   if (isContactPageOpen || isWavyTransitionRunning) return;
   isContactPageOpen = true;
+  pushScreenHistory();
   playSFX();
 
   executeWavyReveal({
@@ -1460,6 +1476,7 @@ function openContactPage(clickEvent) {
 function closeContactPage() {
   if (!isContactPageOpen || isWavyTransitionRunning) return;
   isContactPageOpen = false;
+  popScreenHistory();
 
   executeWavyClose({
     pageEl: contactPage,
@@ -1525,6 +1542,7 @@ function openModal(index) {
 function closeModal() {
   if (!isModalOpen) return;
   isModalOpen = false;
+  popScreenHistory();
   playCloseMenuSFX();
 
   const exitOrigin = getModalExitOrigin();
@@ -1724,6 +1742,98 @@ function enterExperience() {
 // --------------------------------------------------------------------------
 // 13. Event Listeners & Keyboard Navigation
 // --------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+// Touch: phone back button / gesture closes the top screen (touch devices only)
+// --------------------------------------------------------------------------
+let screenHistoryDepth = 0;
+let ignoreNextPopState = false;
+let isHandlingPopState = false;
+
+function pushScreenHistory() {
+  if (!isTouchDevice) return;
+  history.pushState({ p3rScreen: true }, "");
+  screenHistoryDepth++;
+}
+
+// Screen closed from the UI: drop its history entry without closing anything else.
+function popScreenHistory() {
+  if (!isTouchDevice || isHandlingPopState || screenHistoryDepth === 0) return;
+  screenHistoryDepth--;
+  ignoreNextPopState = true;
+  history.back();
+}
+
+function closeTopScreen() {
+  if (isModalOpen) {
+    closeModal();
+    return true;
+  }
+  if (isWavyTransitionRunning) return false;
+  const screens = [
+    [isProjectPageOpen, closeProjectPage],
+    [isExperiencePageOpen, closeExperiencePage],
+    [isSkillPageOpen, closeSkillPage],
+    [isAboutPageOpen, closeAboutPage],
+    [isContactPageOpen, closeContactPage]
+  ];
+  const open = screens.find(([isOpen]) => isOpen);
+  if (!open) return false;
+  open[1]();
+  return true;
+}
+
+if (isTouchDevice) {
+  window.addEventListener("popstate", () => {
+    if (ignoreNextPopState) {
+      ignoreNextPopState = false;
+      return;
+    }
+    if (screenHistoryDepth === 0) return;
+    screenHistoryDepth--;
+    isHandlingPopState = true;
+    const closed = closeTopScreen();
+    isHandlingPopState = false;
+    // Mid-transition: keep the entry so the next back press still works
+    if (!closed) {
+      history.pushState({ p3rScreen: true }, "");
+      screenHistoryDepth++;
+    }
+  });
+
+  // Swipe left/right on the skill list to switch tabs
+  if (p3rSkillsContainer) {
+    let swipeStartX = 0;
+    let swipeStartY = 0;
+    p3rSkillsContainer.addEventListener("touchstart", (e) => {
+      swipeStartX = e.changedTouches[0].clientX;
+      swipeStartY = e.changedTouches[0].clientY;
+    }, { passive: true });
+    p3rSkillsContainer.addEventListener("touchend", (e) => {
+      const dx = e.changedTouches[0].clientX - swipeStartX;
+      const dy = e.changedTouches[0].clientY - swipeStartY;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+        if (dx < 0) nextSkillTab();
+        else prevSkillTab();
+      }
+    }, { passive: true });
+  }
+}
+
+// Phones with data-saver or reduced motion: show still frames instead of video
+const preferStillBackgrounds =
+  isTouchDevice &&
+  (window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+    (navigator.connection && navigator.connection.saveData === true));
+
+if (preferStillBackgrounds) {
+  document.querySelectorAll("video").forEach((video) => {
+    const mobileSource = video.querySelector("source[media]");
+    if (mobileSource) video.poster = mobileSource.getAttribute("src").replace(/\.mp4$/, ".jpg");
+    video.querySelectorAll("source").forEach((source) => source.remove());
+    video.load();
+  });
+}
+
 if (modalCloseBtn) modalCloseBtn.addEventListener("click", closeModal);
 if (modalFooterCloseBtn) modalFooterCloseBtn.addEventListener("click", closeModal);
 if (portfolioModal) {
@@ -1895,17 +2005,8 @@ window.closeContactPage = closeContactPage;
 window.triggerContactPhoneAnimation = triggerContactPhoneAnimation;
 window.playWavyCircleTransition = playWavyCircleTransition;
 
-// URL Navigation Shortcuts & Responsive Init
-if (window.innerWidth < 1024) {
-  // Mobile / Small screen mode: cleanly dismiss loading HUD and exit immediately
-  if (loadingScreen) loadingScreen.style.display = "none";
-  window.addEventListener("resize", () => {
-    if (window.innerWidth >= 1024 && !isStarted) {
-      loadAudioBuffers();
-      startLoadingSequence();
-    }
-  }, { once: true });
-} else if (urlParams.get("page") === "experience") {
+// URL Navigation Shortcuts & Init
+if (urlParams.get("page") === "experience") {
   if (loadingScreen) loadingScreen.style.display = "none";
   isStarted = true;
   isLoaded = true;

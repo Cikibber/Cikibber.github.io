@@ -1,0 +1,483 @@
+/* ==========================================================================
+   MOBILE & TABLET LAYOUT (loaded only below 1024px via <link media>)
+   Same P3R look as desktop, re-flowed for narrow screens and touch.
+   ========================================================================== */
+
+:root {
+  --m-gutter: 16px;
+  --m-safe-top: env(safe-area-inset-top, 0px);
+  --m-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --menu-scale: 0.48;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.p3r-main {
+  height: 100dvh;
+}
+
+/* --------------------------------------------------------------------------
+   Main menu
+   -------------------------------------------------------------------------- */
+
+/* Fill the screen with the video, keeping Makoto in frame */
+.background-video {
+  width: 100vw;
+  height: 100dvh;
+  object-fit: cover;
+  object-position: 22% bottom;
+}
+
+/* Dark-blue fade between the video and the menu keeps the options readable */
+.p3r-main::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(0, 18, 70, 0.9) 0%, rgba(0, 25, 90, 0.65) 32%, rgba(0, 25, 90, 0) 58%);
+}
+
+.menu-column {
+  top: auto;
+  left: 0;
+  bottom: calc(10dvh + var(--m-safe-bottom));
+  transform: scale(var(--menu-scale));
+  transform-origin: left bottom;
+}
+
+.side-number,
+.hud-controls {
+  display: none;
+}
+
+.menu-profile-header {
+  top: calc(18px + var(--m-safe-top));
+  right: var(--m-gutter);
+}
+
+.profile-name-text {
+  font-size: clamp(1.5rem, 6.5vw, 2.2rem);
+}
+
+/* --------------------------------------------------------------------------
+   Shared sub-screen frame (Project, Experience, Skills, About, Contact)
+   -------------------------------------------------------------------------- */
+.p3r-slink-screen {
+  height: 100dvh;
+}
+
+.slink-viewport {
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 100dvh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: calc(8px + var(--m-safe-top)) 0 calc(96px + var(--m-safe-bottom)) 0;
+  pointer-events: auto;
+}
+
+.slink-left-column,
+.p3r-skill-left-column,
+.p3r-about-left-column {
+  max-width: 100%;
+  width: 100%;
+}
+
+.slink-profile-header {
+  margin-left: var(--m-gutter);
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
+
+.slink-profile-name {
+  font-size: 0.85rem;
+}
+
+.p3r-geometric-header {
+  width: min(92vw, 520px);
+  height: 74px;
+  margin-bottom: 22px;
+  transform: rotate(-3deg);
+}
+
+.p3r-banner-title {
+  margin-left: var(--m-gutter);
+  font-size: clamp(2.3rem, 10.5vw, 3.4rem);
+  padding-top: 4px;
+}
+
+/* ◀ BACK pill replaces the keyboard hints */
+.slink-bottom-hud,
+.p3r-contact-bottom-hud {
+  position: fixed;
+  left: var(--m-gutter);
+  right: auto;
+  bottom: calc(16px + var(--m-safe-bottom));
+  z-index: 40;
+}
+
+#slink-confirm-btn,
+#exp-confirm-btn,
+#skill-tab-prev-btn,
+#skill-tab-next-btn {
+  display: none;
+}
+
+#slink-back-btn,
+#exp-back-btn,
+#skill-back-btn,
+#about-back-btn,
+#contact-back-btn {
+  min-width: 112px;
+  min-height: 48px;
+  padding: 0 20px;
+  justify-content: center;
+  background: #ffffff;
+  color: var(--color-bg-dark);
+  transform: skewX(-12deg);
+  box-shadow: 0 6px 18px rgba(0, 10, 40, 0.45);
+}
+
+#slink-back-btn .control-key,
+#slink-back-btn .control-text,
+#exp-back-btn .control-key,
+#exp-back-btn .control-text,
+#skill-back-btn .control-key,
+#skill-back-btn .control-text,
+#about-back-btn .control-key,
+#about-back-btn .control-text,
+#contact-back-btn .control-key,
+#contact-back-btn .control-text {
+  display: none;
+}
+
+#slink-back-btn::before,
+#exp-back-btn::before,
+#skill-back-btn::before,
+#about-back-btn::before,
+#contact-back-btn::before {
+  content: "◀ BACK";
+  display: inline-block;
+  transform: skewX(12deg);
+  font-family: var(--font-rodin), sans-serif;
+  font-weight: 900;
+  font-style: italic;
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
+  color: var(--color-bg-dark);
+}
+
+/* --------------------------------------------------------------------------
+   Project & Experience: Social Link cards
+   -------------------------------------------------------------------------- */
+.slink-cards-container {
+  margin-left: var(--m-gutter);
+  width: calc(100vw - var(--m-gutter) * 2 - 14px);
+  max-width: 640px;
+  --card-gap: 12px;
+}
+
+.slink-card {
+  --card-skew: -12deg;
+  --card-unskew: 12deg;
+  width: 100%;
+  height: auto;
+  min-height: 74px;
+  margin-left: 0;
+}
+
+/* Highlighted card: keep the desktop pop-out, but stay on screen */
+.slink-card.active {
+  width: 100% !important;
+  transform: skewX(var(--card-skew)) translateX(8px) !important;
+}
+
+.card-numeral-box {
+  width: 52px;
+}
+
+.card-numeral-text {
+  font-size: 1.45rem;
+}
+
+.slink-card .card-main-body {
+  padding: 10px 2.1rem 10px 1rem;
+}
+
+.card-title-text {
+  font-size: clamp(1.02rem, 4.4vw, 1.3rem);
+  white-space: normal;
+  overflow: visible;
+}
+
+.card-subtitle-text {
+  font-size: clamp(0.74rem, 3.2vw, 0.9rem);
+  white-space: normal;
+  overflow: visible;
+}
+
+.card-rank-badge {
+  position: static;
+  transform: skewX(var(--card-unskew));
+  flex-direction: row;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.card-rank-label {
+  font-size: 0.62rem;
+}
+
+.card-rank-val {
+  font-size: 0.95rem;
+}
+
+.card-red-accent {
+  width: 18px;
+}
+
+/* --------------------------------------------------------------------------
+   Skills
+   -------------------------------------------------------------------------- */
+.p3r-skill-tabs {
+  margin-left: var(--m-gutter);
+  margin-right: 0;
+  padding: 2px 24px 8px 4px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+
+.p3r-skill-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.p3r-skill-tab {
+  flex-shrink: 0;
+  scroll-snap-align: start;
+}
+
+.p3r-skills-container {
+  margin-left: var(--m-gutter);
+  width: calc(100vw - var(--m-gutter) * 2);
+  max-height: none;
+  overflow: visible;
+  padding-right: 6px;
+  padding-bottom: 0;
+}
+
+.p3r-group-title {
+  font-size: 1.05rem;
+}
+
+.p3r-stat-row {
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 14px 12px;
+  transform: skewX(-8deg);
+}
+
+.p3r-stat-name-col {
+  width: 100%;
+  transform: skewX(8deg);
+}
+
+.p3r-stat-name {
+  font-size: 0.98rem;
+  white-space: normal;
+}
+
+.p3r-stat-bar-track {
+  flex: 1 1 100%;
+  height: 16px;
+}
+
+/* --------------------------------------------------------------------------
+   About
+   -------------------------------------------------------------------------- */
+.p3r-about-card {
+  margin-left: var(--m-gutter);
+  width: calc(100vw - var(--m-gutter) * 2);
+  max-width: 640px;
+  padding: 22px 18px;
+}
+
+.p3r-about-top-row {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.p3r-photo-box {
+  width: 104px;
+  height: 104px;
+}
+
+.p3r-about-name {
+  font-size: clamp(1.35rem, 6vw, 1.8rem);
+}
+
+.p3r-about-p {
+  font-size: 0.95rem;
+}
+
+/* --------------------------------------------------------------------------
+   Contact: MAIL phone
+   -------------------------------------------------------------------------- */
+.p3r-contact-viewport {
+  align-items: flex-start;
+  justify-content: center;
+  padding: calc(28px + var(--m-safe-top)) 0 calc(96px + var(--m-safe-bottom));
+  height: 100dvh;
+}
+
+.p3r-mail-phone-wrap {
+  --mail-skew: -5deg;
+  --mail-rot: -1deg;
+  width: min(92vw, 560px);
+  height: auto;
+  transform-origin: center center;
+}
+
+.p3r-mail-phone-card {
+  padding: 20px 20px 26px 16px;
+}
+
+.p3r-mail-watermark {
+  font-size: clamp(3rem, 15vw, 4.6rem);
+}
+
+.p3r-mail-list-container {
+  padding-right: 6px;
+  gap: 12px;
+}
+
+.p3r-mail-row {
+  height: 72px;
+}
+
+.p3r-mail-icon-block {
+  width: 70px;
+}
+
+.p3r-mail-icon-block svg {
+  width: 26px;
+  height: 26px;
+}
+
+.p3r-mail-content-block {
+  padding: 6px 12px 6px 10px;
+}
+
+.p3r-mail-msg-text {
+  font-size: clamp(0.74rem, 3.3vw, 1.05rem);
+}
+
+/* --------------------------------------------------------------------------
+   Detail card: full-screen sheet
+   -------------------------------------------------------------------------- */
+.portfolio-modal .modal-card {
+  width: 100vw;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  border: none;
+  outline: none;
+  border-radius: 0;
+}
+
+.portfolio-modal .modal-header {
+  padding: calc(12px + var(--m-safe-top)) var(--m-gutter) 12px;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.portfolio-modal .modal-title-wrap {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+}
+
+.portfolio-modal.project-detail-mode .modal-title {
+  font-size: clamp(1.3rem, 6vw, 1.7rem);
+}
+
+.portfolio-modal .modal-tag {
+  font-size: 0.8rem;
+}
+
+.portfolio-modal .modal-close-btn {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+
+.portfolio-modal .modal-body {
+  flex: 1;
+  padding: 18px var(--m-gutter) calc(28px + var(--m-safe-bottom));
+}
+
+.project-detail-desc {
+  font-size: 0.98rem;
+}
+
+.project-highlights-grid {
+  grid-template-columns: 1fr;
+}
+
+.project-repo-btn {
+  min-height: 48px;
+}
+
+.portfolio-modal .modal-footer {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   Tablets (portrait iPad and similar)
+   -------------------------------------------------------------------------- */
+@media (min-width: 700px) {
+  :root {
+    --menu-scale: 0.62;
+    --m-gutter: 32px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Landscape phones: short screens
+   -------------------------------------------------------------------------- */
+@media (max-height: 500px) {
+  :root {
+    --menu-scale: 0.34;
+  }
+
+  .menu-column {
+    left: auto;
+    right: 4vw;
+    bottom: calc(4dvh + var(--m-safe-bottom));
+    transform-origin: right bottom;
+  }
+
+  .p3r-geometric-header {
+    height: 58px;
+    margin-bottom: 14px;
+  }
+
+  .p3r-banner-title {
+    font-size: 2.2rem;
+  }
+}
+
+/* Touch screens have no hover: drop hover-only lift effects */
+@media (hover: none) {
+  .modal-info-card:hover {
+    transform: none;
+  }
+}

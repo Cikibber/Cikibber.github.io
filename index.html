@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Wesley Maximillian Lay | Portfolio</title>
   <meta name="description" content="Wesley Maximillian Lay: Informatics student, AI enthusiast, and full stack developer. Portfolio styled after the Persona 3 Reload pause menu.">
   <link rel="shortcut icon" href="assets/favicon.png" type="image/x-icon">
@@ -13,14 +13,10 @@
   <link rel="preload" href="fonts/Rodin Pro EB.otf" as="font" type="font/otf" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&display=swap"></noscript>
-  <link rel="stylesheet" href="css/style.css?v=41">
+  <link rel="stylesheet" href="css/style.css?v=42">
+  <link rel="stylesheet" href="css/mobile.css?v=4" media="(max-width: 1023px), (hover: none) and (pointer: coarse)">
 </head>
 <body>
-  <!-- Mobile / Small Screen Notification -->
-  <div class="mobile-warning">
-    <p>Sorry, this website is not supported for your device.</p>
-    <p>Try viewing this site on a computer!</p>
-  </div>
 
 
   <!-- Persona 3 Reload - Clean Sea Blue Loading Screen -->
@@ -49,20 +45,24 @@
     <video
       id="background-video-intro"
       class="background-video bg-video-intro"
-      src="assets/bg-intro.mp4"
       muted
       playsinline
       preload="metadata"
-    ></video>
+    >
+      <source src="assets/mobile/bg-intro.mp4" type="video/mp4" media="(max-width: 1023px), (hover: none) and (pointer: coarse)">
+      <source src="assets/bg-intro.mp4" type="video/mp4">
+    </video>
     <video
       id="background-video-loop"
       class="background-video bg-video-loop"
-      src="assets/bg-loop.mp4"
       loop
       muted
       playsinline
       preload="none"
-    ></video>
+    >
+      <source src="assets/mobile/bg-loop.mp4" type="video/mp4" media="(max-width: 1023px), (hover: none) and (pointer: coarse)">
+      <source src="assets/bg-loop.mp4" type="video/mp4">
+    </video>
 
     <!-- Side Watermark Number (01, 02, etc.) -->
     <div id="side-number" class="side-number">
@@ -111,6 +111,7 @@
     <!-- Project Screen Animated Video Background (Makoto Wallpaper) -->
     <div class="slink-video-container" aria-hidden="true">
       <video id="slink-bg-video" class="slink-bg-video" loop muted playsinline preload="none">
+        <source src="assets/mobile/skills-bg.mp4" type="video/mp4" media="(max-width: 1023px), (hover: none) and (pointer: coarse)">
         <source src="assets/skills-bg.mp4" type="video/mp4">
       </video>
       <div class="slink-video-overlay" aria-hidden="true"></div>
@@ -169,6 +170,7 @@
     <!-- Experience Screen Video Background -->
     <div class="slink-video-container" aria-hidden="true">
       <video id="exp-bg-video" class="slink-bg-video" loop muted playsinline preload="none">
+        <source src="assets/mobile/makoto-wallpaper.mp4" type="video/mp4" media="(max-width: 1023px), (hover: none) and (pointer: coarse)">
         <source src="assets/makoto-wallpaper.mp4" type="video/mp4">
       </video>
       <div class="slink-video-overlay" aria-hidden="true"></div>
@@ -230,6 +232,7 @@
     <!-- Video Background (Makoto Wallpaper) -->
     <div class="slink-video-container" aria-hidden="true">
       <video id="skill-bg-video" class="slink-bg-video" loop muted playsinline preload="none">
+        <source src="assets/mobile/makoto-wallpaper.mp4" type="video/mp4" media="(max-width: 1023px), (hover: none) and (pointer: coarse)">
         <source src="assets/makoto-wallpaper.mp4" type="video/mp4">
       </video>
       <div class="slink-video-overlay" aria-hidden="true"></div>
@@ -303,6 +306,7 @@
     <!-- Video Background (Makoto Wallpaper) -->
     <div class="slink-video-container" aria-hidden="true">
       <video id="about-bg-video" class="slink-bg-video" loop muted playsinline preload="none">
+        <source src="assets/mobile/about-bg.mp4" type="video/mp4" media="(max-width: 1023px), (hover: none) and (pointer: coarse)">
         <source src="assets/about-bg.mp4" type="video/mp4">
       </video>
       <div class="slink-video-overlay" aria-hidden="true"></div>
@@ -392,6 +396,7 @@
     <!-- Video Background (Atmospheric Loop) -->
     <div class="slink-video-container" aria-hidden="true">
       <video id="contact-bg-video" class="slink-bg-video" loop muted playsinline preload="none">
+        <source src="assets/mobile/contact-bg.mp4" type="video/mp4" media="(max-width: 1023px), (hover: none) and (pointer: coarse)">
         <source src="assets/contact-bg.mp4" type="video/mp4">
       </video>
       <div class="slink-video-overlay p3r-contact-overlay" aria-hidden="true"></div>
@@ -549,6 +554,6 @@
     </div>
   </div>
 
-  <script src="js/main.js?v=42" defer></script>
+  <script src="js/main.js?v=46" defer></script>
 </body>
 </html>
