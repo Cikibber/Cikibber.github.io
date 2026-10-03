@@ -714,6 +714,18 @@ function renderOptions() {
   });
 }
 
+// Load the screen video behind a menu option early so it has a frame ready before the screen opens.
+function preloadOptionVideo(index) {
+  const video = {
+    PROJECT: slinkBgVideo,
+    EXPERIENCE: expBgVideo,
+    SKILLS: skillBgVideo,
+    ABOUT: aboutBgVideo,
+    CONTACT: contactBgVideo
+  }[options[index].name];
+  if (video && video.preload !== "auto") video.preload = "auto";
+}
+
 function setIndex(index) {
   if (index === selectedIndex && cachedOptionItems.length > 0) return;
   selectedIndex = index;
@@ -725,14 +737,7 @@ function setIndex(index) {
   }
 
   // Speculatively preload the selected subpage's video just in time
-  const preloadVideo = {
-    PROJECT: slinkBgVideo,
-    EXPERIENCE: expBgVideo,
-    SKILLS: skillBgVideo,
-    ABOUT: aboutBgVideo,
-    CONTACT: contactBgVideo
-  }[options[index].name];
-  if (preloadVideo && preloadVideo.preload !== "auto") preloadVideo.preload = "auto";
+  preloadOptionVideo(index);
 
   for (let idx = 0; idx < cachedOptionItems.length; idx++) {
     const item = cachedOptionItems[idx];
@@ -882,7 +887,7 @@ function executeWavyReveal({
   }
 
   if (videoEl) {
-    videoEl.currentTime = 0;
+    if (videoEl.currentTime !== 0) videoEl.currentTime = 0;
     videoEl.muted = true;
     videoEl.play().catch(() => {});
   }
@@ -974,7 +979,10 @@ function executeWavyClose({
     pageEl.classList.remove("circle-transitioning", "active");
     pageEl.style.clipPath = "";
     pageEl.setAttribute("aria-hidden", "true");
-    if (videoEl) videoEl.pause();
+    if (videoEl) {
+      videoEl.pause();
+      videoEl.currentTime = 0;
+    }
     // Resume main menu loop video seamlessly
     if (bgVideoLoop && bgVideoLoop.paused) {
       bgVideoLoop.play().catch(() => {});
@@ -2041,6 +2049,7 @@ if (!isNaN(initialSelect) && initialSelect >= 0 && initialSelect < options.lengt
 } else {
   setIndex(0);
 }
+preloadOptionVideo(selectedIndex);
 
 // Expose public API for debugging, URL parameters, and automated testing
 window.openProjectPage = openProjectPage;
