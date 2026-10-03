@@ -718,6 +718,11 @@ body.experience-screen-active .side-number {
   pointer-events: auto;
 }
 
+/* No backdrop blur while the wavy clip-path animates (Chrome flickers otherwise) */
+.portfolio-modal.is-animating {
+  backdrop-filter: none;
+}
+
 .portfolio-modal.circle-transitioning {
   display: flex !important;
   opacity: 1 !important;

@@ -1140,6 +1140,8 @@ function openProjectDetail(item, cardId) {
     modalCloseAnim.cancel();
     modalCloseAnim = null;
   }
+  // Chrome flickers when a backdrop blur is clipped by an animating clip-path, so drop it mid-transition.
+  portfolioModal.classList.add("is-animating");
 
   const origin = getSlinkCardCenter(cardId);
   const targetRadius = calculateTargetRadius(origin);
@@ -1153,6 +1155,7 @@ function openProjectDetail(item, cardId) {
     fill: "forwards"
   });
   modalOpenAnim.onfinish = () => {
+    portfolioModal.classList.remove("is-animating");
     portfolioModal.style.clipPath = "";
     if (modalOpenAnim) modalOpenAnim.cancel();
     modalOpenAnim = null;
@@ -1597,6 +1600,7 @@ function closeModal() {
     modalOpenAnim.cancel();
     modalOpenAnim = null;
   }
+  portfolioModal.classList.add("is-animating");
 
   const exitOrigin = getModalExitOrigin();
   const targetRadius = calculateTargetRadius(exitOrigin);
@@ -1614,7 +1618,7 @@ function closeModal() {
   closeAnim.onfinish = () => {
     if (modalCloseAnim !== closeAnim) return;
     modalCloseAnim = null;
-    portfolioModal.classList.remove("active", "project-detail-mode");
+    portfolioModal.classList.remove("active", "project-detail-mode", "is-animating");
     portfolioModal.setAttribute("aria-hidden", "true");
     portfolioModal.style.clipPath = "";
     closeAnim.cancel();
